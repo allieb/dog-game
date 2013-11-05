@@ -1,4 +1,17 @@
 var canvas = document.getElementById('tutorial');
+var x = 0;
+var y = 0;
+var speedx = 5;
+var speedy = 5;
+var img = new Image();
+var paused = false;
+var mousex=canvas.width/2;
+var mousey=canvas.height/2;
+
+function init (){
+    img.src = "dog-head-md.png";
+}
+
 function update() {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -39,26 +52,22 @@ function update() {
     ctx.drawImage(img, x, y, 35, 25);
 }
 
-var x = 0;
-var y = 0;
-var speedx = 5;
-var speedy = 5;
-var img = new Image();
-var paused = false;
-var mousex=canvas.width/2;
-var mousey=canvas.height/2;
-img.src = "dog-head-md.png";
 function togglePause() {
     if (event.keyCode == 32) {
         paused = !paused;
     }
 }
+
 function mouseMoved(){
     console.log (event.clientX);
 }
+
+// TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
+//       see: https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame
 window.setInterval(update, 100);
+
 document.onkeypress = togglePause;
-window.onmousemove=mouseMoved;
+window.onmousemove = mouseMoved;
 
 
 
