@@ -12,6 +12,11 @@ function init (){
     img.src = "dog-head-md.png";
 }
 
+function moveDog (){
+    x = x + speedx;
+    y = y + speedy;
+}
+
 function update() {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -19,7 +24,8 @@ function update() {
     if (paused)
         return;
 
-    x = x + speedx;
+    moveDog ();
+    
     if (x>canvas.width-35) {
         speedx=-5;
         x=canvas.width-35
@@ -35,7 +41,7 @@ function update() {
     else if (x>mousex){
         speedx=-5;
     }
-    y=y+speedy;
+    
     if (y>canvas.height-25){
         speedy=-5;
         y=canvas.height-25;
