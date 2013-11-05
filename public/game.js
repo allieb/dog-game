@@ -78,7 +78,8 @@ function togglePause() {
 }
 
 function mouseMoved(){
-    console.log (event.clientX);
+    mousex = event.clientX;
+    mousey = event.clientY;
 }
 
 // TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
