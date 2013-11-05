@@ -36,8 +36,8 @@ function chase (chaser, chasee) {
 
     // TODO: Calculate speed based on how close the dog is to the player or a treat
     chaser.speed = 5;
-    chaser.heading.x = chaser.speed * (rightOf (chaser, chasee)? 1 : -1);
-    chaser.heading.y = chaser.speed * (below (chaser, chasee)? 1 : -1);
+    chaser.heading.x = chaser.speed * (rightOf (chaser, chasee)? -1 : 1);
+    chaser.heading.y = chaser.speed * (below (chaser, chasee)? -1 : 1);
 }
 
 function move (thing) {
