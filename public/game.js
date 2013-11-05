@@ -60,8 +60,14 @@ function update() {
 }
 
 function togglePause() {
-    if (event.keyCode == 32) {
-        paused = !paused;
+    paused = !paused;
+}
+
+function onKeyDown (event) {
+    switch (event.keyCode)
+    {
+    case 32:
+        togglePause ();
     }
 }
 
@@ -84,7 +90,7 @@ HTMLCanvasElement.prototype.relMouseCoords = function (event){
     return {x:canvasX, y:canvasY}
 }
 
-function mouseMoved() {
+function onMouseMove(event) {
     var mousePosition = canvas.relMouseCoords (event);
     mousex = mousePosition.x;
     mousey = mousePosition.y;
@@ -93,7 +99,8 @@ function mouseMoved() {
 // TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
 //       see: https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame
 window.setInterval(update, 100);
-document.onkeypress = togglePause;
-window.onmousemove = mouseMoved;
+
+document.addEventListener ('keydown', onKeyDown);
+document.addEventListener ('mousemove', onMouseMove);
 
 startGame ();
