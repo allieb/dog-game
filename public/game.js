@@ -12,20 +12,12 @@ function startGame (){
     img.src = "dog-head-md.png";
 }
 
-function adjustDogSpeedToChaseMouse (){
-    if (x < mousex){
-        speedx = 5;
-    }
-    else if (x > mousex){
-        speedx = -5;
-    }
+function below (a, b) { return a > b; }
+function rightOf (a, b) { return a > b; }
 
-    if (y < mousey){
-        speedy = 5;
-    }
-    else if (y > mousey){
-        speedy = -5;
-    }
+function adjustDogSpeedToChaseMouse (){
+    speedx = rightOf (x, mousex)? -5 : 5;
+    speedy = below (x, mousex)? -5 : 5;
 }
 
 function moveDog (){
