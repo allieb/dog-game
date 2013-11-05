@@ -109,6 +109,9 @@ function update() {
 
 function togglePause() {
     game.paused = !game.paused;
+
+    var pauseScreen = document.getElementById ('pause-screen');
+    pauseScreen.style.display = game.paused? 'block' : 'none';
 }
 
 function onKeyDown (event) {
