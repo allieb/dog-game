@@ -1,64 +1,114 @@
 var canvas = document.getElementById('game');
-var x = 0;
-var y = 0;
-var speedx = 5;
-var speedy = 5;
-var img = new Image();
-var paused = false;
-var mousex = canvas.width / 2;
-var mousey = canvas.height / 2;
 
-function below (a, b) { return a > b; }
-function rightOf (a, b) { return a > b; }
+var dog = {
+    position: { x: 0, y: 0 },
+    heading: { x: 5, y: 5 },
+    speed: 5,
+    image: new Image ()
+};
 
-function adjustDogSpeedToChaseMouse () {
-    speedx = rightOf (x, mousex)? -5 : 5;
-    speedy = below (x, mousex)? -5 : 5;
+var player = { position: { x: 0, y: 0 } };
+var game = {paused: false};
+
+function logPosition (name, thing) {
+    console.log (name + ' position: ' + thing.position.x + ', ' + thing.position.y);
 }
 
-function moveDog () {
-    x = x + speedx;
-    y = y + speedy;
+function below (a, b) {
+    return a.position.y > b.position.y;
 }
 
-function keepDogOnScreen () {
-    if (x>canvas.width-35) {
-        speedx=-5;
-        x=canvas.width-35
-    } else if (x<0) {
-        speedx=5;
-        x=0;
+function rightOf (a, b) {
+    return a.position.x > b.position.x;
+}
+
+function samePlace (a, b) {
+    return a.position.x == b.position.x
+        && a.position.y == b.position.y;
+}
+
+function chase (chaser, chasee) {
+    if (samePlace (chaser, chasee)) {
+        chaser.heading = { x: 0, y: 0 };
+        chaser.speed = 0;
+        return;
     }
 
-    if (y>canvas.height-25){
-        speedy=-5;
-        y=canvas.height-25;
-    } else if (y<0){
-        speedy=5;
-        y=0;
-    }
+    // TODO: Calculate speed based on how close the dog is to the player or a treat
+    chaser.speed = 5;
+    chaser.heading.x = chaser.speed * (rightOf (chaser, chasee)? 1 : -1);
+    chaser.heading.y = chaser.speed * (below (chaser, chasee)? 1 : -1);
+}
+
+function move (thing) {
+    thing.position.x += thing.heading.x;
+    thing.position.y += thing.heading.y;
+}
+
+function offStageRight (thing) {
+    return thing.position.x > canvas.width - thing.image.width;
+}
+
+function moveToStageRightEdge (thing) {
+    thing.position.x = canvas.width - thing.image.width;
+}
+
+function offStageLeft (thing) {
+    return thing.position.x < 0;
+}
+
+function moveToStageLeftEdge (thing) {
+    thing.position.x = 0;
+}
+
+function offStageBottom (thing) {
+    return thing.position.y > canvas.height - thing.image.height;
+}
+
+function moveToStageBottomEdge (thing) {
+    thing.position.y = canvas.height - thing.image.height;
+}
+
+function offStageTop (thing) {
+    return thing.position.y < 0;
+}
+
+function moveToStageTopEdge (thing) {
+    thing.position.y = 0;
+}
+
+function keepOnStage (thing) {
+    if (offStageRight (thing))
+        moveToStageRightEdge (thing);
+    else if (offStageLeft (thing))
+        moveToStageLeftEdge (thing);
+
+    if (offStageBottom (thing))
+        moveToStageBottomEdge (thing);
+    else if (offStageTop (thing))
+        moveToStageTopEdge (thing);
 }
 
 function drawScene () {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, x, y, 270/8, 298/8);
+    ctx.drawImage(dog.image, dog.position.x, dog.position.y);
 }
 
 function update() {
-    if (paused)
+    if (game.paused)
         return;
 
-    adjustDogSpeedToChaseMouse ();
-    moveDog ();
-    keepDogOnScreen ();
+    chase (dog, player);
+    move (dog);
+    keepOnStage (dog);
     drawScene ();
 
     window.requestAnimationFrame (update);
 }
 
 function togglePause() {
-    paused = !paused;
+    game.paused = !game.paused;
 }
 
 function onKeyDown (event) {
@@ -69,46 +119,26 @@ function onKeyDown (event) {
     }
 }
 
-// copied from: http://stackoverflow.com/a/5932203/12934
-HTMLCanvasElement.prototype.relMouseCoords = function (event){
-    var totalOffsetX = 0;
-    var totalOffsetY = 0;
-    var canvasX = 0;
-    var canvasY = 0;
-    var currentElement = this;
-
-    do{
-        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
-        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-    } while(currentElement = currentElement.offsetParent)
-
-    canvasX = event.pageX - totalOffsetX;
-    canvasY = event.pageY - totalOffsetY;
-
-    return {x:canvasX, y:canvasY}
-}
-
 function onMouseMove(event) {
-    var mousePosition = canvas.relMouseCoords (event);
-    mousex = mousePosition.x;
-    mousey = mousePosition.y;
+    player.position.x = event.clientX;
+    player.position.y = event.clientY;
+    logPosition ('player', player);
+    logPosition ('dog', dog);
 }
 
-function onResize (){
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    canvas.setAttribute ('width', w);
-    canvas.setAttribute ('height', h);
+function resizeCanvas (){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 
 function startGame () {
-    img.src = "dog-head-md.png";
+    resizeCanvas ();
+    dog.image.src = "dog-head-md.png";
     window.requestAnimationFrame (update);
 }
 
 document.addEventListener ('keydown', onKeyDown);
 document.addEventListener ('mousemove', onMouseMove);
-document.addEventListener ('resize', onResize);
+document.addEventListener ('resize', resizeCanvas);
 
-onResize ();
 startGame ();
