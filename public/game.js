@@ -8,8 +8,24 @@ var paused = false;
 var mousex=canvas.width/2;
 var mousey=canvas.height/2;
 
-function init (){
+function startGame (){
     img.src = "dog-head-md.png";
+}
+
+function adjustDogSpeedToChaseMouse (){
+    if (x < mousex){
+        speedx = 5;
+    }
+    else if (x > mousex){
+        speedx = -5;
+    }
+
+    if (y < mousey){
+        speedy = 5;
+    }
+    else if (y > mousey){
+        speedy = -5;
+    }
 }
 
 function moveDog (){
@@ -17,15 +33,7 @@ function moveDog (){
     y = y + speedy;
 }
 
-function update() {
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (paused)
-        return;
-
-    moveDog ();
-    
+function keepDogOnScreen (){
     if (x>canvas.width-35) {
         speedx=-5;
         x=canvas.width-35
@@ -35,13 +43,7 @@ function update() {
         speedx=5;
         x=0;
     }
-    else if (x<mousex){
-        speedx=5;
-    }
-    else if (x>mousex){
-        speedx=-5;
-    }
-    
+
     if (y>canvas.height-25){
         speedy=-5;
         y=canvas.height-25;
@@ -50,14 +52,23 @@ function update() {
         speedy=5;
         y=0;
     }
-    else if (y<mousey){
-        speedy=5;
-    }
-    else if (y>mousey){
-        speedy=-5;
-    }
 
+}
+
+function drawScene (){
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, x, y, 35, 25);
+}
+
+function update() {
+    if (paused)
+        return;
+
+    adjustDogSpeedToChaseMouse ();
+    moveDog ();
+    keepDogOnScreen ();
+    drawScene ();
 }
 
 function togglePause() {
@@ -73,9 +84,10 @@ function mouseMoved(){
 // TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
 //       see: https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame
 window.setInterval(update, 100);
-
 document.onkeypress = togglePause;
 window.onmousemove = mouseMoved;
+
+startGame ();
 
 
 
