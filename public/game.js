@@ -8,10 +8,6 @@ var paused = false;
 var mousex = canvas.width / 2;
 var mousey = canvas.height / 2;
 
-function startGame () {
-    img.src = "dog-head-md.png";
-}
-
 function below (a, b) { return a > b; }
 function rightOf (a, b) { return a > b; }
 
@@ -57,6 +53,8 @@ function update() {
     moveDog ();
     keepDogOnScreen ();
     drawScene ();
+
+    window.requestAnimationFrame (update);
 }
 
 function togglePause() {
@@ -103,9 +101,10 @@ function onResize (){
     canvas.setAttribute ('height', h);
 }
 
-// TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
-//       see: https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame
-window.setInterval(update, 100);
+function startGame () {
+    img.src = "dog-head-md.png";
+    window.requestAnimationFrame (update);
+}
 
 document.addEventListener ('keydown', onKeyDown);
 document.addEventListener ('mousemove', onMouseMove);
