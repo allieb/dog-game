@@ -96,11 +96,20 @@ function onMouseMove(event) {
     mousey = mousePosition.y;
 }
 
+function onResize (){
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    canvas.setAttribute ('width', w);
+    canvas.setAttribute ('height', h);
+}
+
 // TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
 //       see: https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame
 window.setInterval(update, 100);
 
 document.addEventListener ('keydown', onKeyDown);
 document.addEventListener ('mousemove', onMouseMove);
+document.addEventListener ('resize', onResize);
 
+onResize ();
 startGame ();
