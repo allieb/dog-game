@@ -1,4 +1,4 @@
-var canvas = document.getElementById('tutorial');
+var canvas = document.getElementById('game');
 var x = 0;
 var y = 0;
 var speedx = 5;
