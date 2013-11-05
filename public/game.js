@@ -5,33 +5,31 @@ var speedx = 5;
 var speedy = 5;
 var img = new Image();
 var paused = false;
-var mousex=canvas.width/2;
-var mousey=canvas.height/2;
+var mousex = canvas.width / 2;
+var mousey = canvas.height / 2;
 
-function startGame (){
+function startGame () {
     img.src = "dog-head-md.png";
 }
 
 function below (a, b) { return a > b; }
 function rightOf (a, b) { return a > b; }
 
-function adjustDogSpeedToChaseMouse (){
+function adjustDogSpeedToChaseMouse () {
     speedx = rightOf (x, mousex)? -5 : 5;
     speedy = below (x, mousex)? -5 : 5;
 }
 
-function moveDog (){
+function moveDog () {
     x = x + speedx;
     y = y + speedy;
 }
 
-function keepDogOnScreen (){
+function keepDogOnScreen () {
     if (x>canvas.width-35) {
         speedx=-5;
         x=canvas.width-35
-    }
-
-    else if (x<0) {
+    } else if (x<0) {
         speedx=5;
         x=0;
     }
@@ -39,18 +37,16 @@ function keepDogOnScreen (){
     if (y>canvas.height-25){
         speedy=-5;
         y=canvas.height-25;
-    }
-    else if (y<0){
+    } else if (y<0){
         speedy=5;
         y=0;
     }
-
 }
 
-function drawScene (){
+function drawScene () {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, x, y, 35, 25);
+    ctx.drawImage(img, x, y, 270/8, 298/8);
 }
 
 function update() {
@@ -69,9 +65,29 @@ function togglePause() {
     }
 }
 
-function mouseMoved(){
-    mousex = event.clientX;
-    mousey = event.clientY;
+// copied from: http://stackoverflow.com/a/5932203/12934
+HTMLCanvasElement.prototype.relMouseCoords = function (event){
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = this;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    } while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+
+function mouseMoved() {
+    var mousePosition = canvas.relMouseCoords (event);
+    mousex = mousePosition.x;
+    mousey = mousePosition.y;
 }
 
 // TODO: use requestAnimationFrame instead of hard-coded 100ms to make this look less choppy
@@ -81,13 +97,3 @@ document.onkeypress = togglePause;
 window.onmousemove = mouseMoved;
 
 startGame ();
-
-
-
-
-
-
-
-
-
-
