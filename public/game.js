@@ -1,14 +1,20 @@
 var canvas = document.getElementById('game');
+var statusDiv = document.getElementById('status');
 
 var dog = {
     position: { x: 0, y: 0 },
     heading: { x: 5, y: 5 },
-    speed: 5,
+    speed: 0,
+    scale: {x: 0.1, y: 0.1},
     image: new Image ()
 };
 
 var player = { position: { x: 0, y: 0 } };
-var game = {paused: false};
+
+var game = {
+    paused: false,
+    difficulty: 1
+};
 
 function logPosition (name, thing) {
     console.log (name + ' position: ' + thing.position.x + ', ' + thing.position.y);
@@ -22,20 +28,29 @@ function rightOf (a, b) {
     return a.position.x > b.position.x;
 }
 
-function samePlace (a, b) {
-    return a.position.x == b.position.x
-        && a.position.y == b.position.y;
+function samePlace (dist) {
+    return dist <= 1.0;
+}
+
+function stopOn (a, b) {
+    a.position.x = b.position.x;
+    a.position.y = b.position.y;
+    a.heading = { x: 0, y: 0 };
+    a.speed = 0;
+}
+
+function distance (a, b) {
+    return Math.sqrt (Math.pow (a.position.x - b.position.x, 2)
+                      + Math.pow (a.position.y - b.position.y, 2));
 }
 
 function chase (chaser, chasee) {
-    if (samePlace (chaser, chasee)) {
-        chaser.heading = { x: 0, y: 0 };
-        chaser.speed = 0;
-        return;
-    }
+    var d = distance (chaser, chasee);
+    if (samePlace (d))
+        // TODO: do something when the dog catches the player
+        return stopOn (chaser, chasee);
 
-    // TODO: Calculate speed based on how close the dog is to the player or a treat
-    chaser.speed = 5;
+    chaser.speed = game.difficulty * (d / 9.0);
     chaser.heading.x = chaser.speed * (rightOf (chaser, chasee)? -1 : 1);
     chaser.heading.y = chaser.speed * (below (chaser, chasee)? -1 : 1);
 }
@@ -89,10 +104,19 @@ function keepOnStage (thing) {
         moveToStageTopEdge (thing);
 }
 
+function updateStatus () {
+    statusDiv.textContent = dog.position.x.toString () + "," + dog.position.y + "@" + dog.speed;
+}
+
 function drawScene () {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(dog.image, dog.position.x, dog.position.y);
+    ctx.save ();
+    ctx.translate (dog.position.x, dog.position.y);
+    ctx.scale (dog.scale.x, dog.scale.y);
+    ctx.drawImage(dog.image, 0, 0);
+    ctx.restore ();
+    updateStatus ();
 }
 
 function update() {
@@ -125,8 +149,6 @@ function onKeyDown (event) {
 function onMouseMove(event) {
     player.position.x = event.clientX;
     player.position.y = event.clientY;
-    logPosition ('player', player);
-    logPosition ('dog', dog);
 }
 
 function resizeCanvas (){
