@@ -1,0 +1,45 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+canvas {
+    position: absolute;
+}
+
+#pause-screen {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #aaaaaa;
+    opacity: 0.75;
+    z-index: 998;
+    display: none;
+}
+
+#pause-screen .message {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    /* You must set a size manually */
+    width: 100px;
+    height: 50px;
+
+    /* Set negative margins equal to half the size */
+    /* margin-left​: -50px; */
+    /* margin-top: -25px; */
+
+    font: normal bold 36px Sans-Serif;
+    color: red;
+    z-index: 999;
+}
+
+#status {
+    float: right;
+    opactiy: 0.5;
+    font: normal bold 18px Sans-Serif;
+    color: red;
+    z-index: 999;
+}
