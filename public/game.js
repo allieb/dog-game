@@ -113,22 +113,18 @@ function drawScene () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save ();
     ctx.translate (dog.position.x, dog.position.y);
-    ctx.scale (dog.scale.x, dog.scale.y);
     ctx.drawImage(dog.image, 0, 0);
     ctx.restore ();
-    updateStatus ();
 }
 
 function update() {
+	window.requestAnimationFrame (update);
     if (game.paused)
         return;
-
     chase (dog, player);
     move (dog);
     keepOnStage (dog);
     drawScene ();
-
-    window.requestAnimationFrame (update);
 }
 
 function togglePause() {
