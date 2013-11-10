@@ -31,6 +31,18 @@ function rightOf (a, b) {
 function samePlace (dist) {
     return dist <= 1.0;
 }
+function buzzing (){
+}
+
+function onEdge (chaser){
+	if (chaser.position.x == 0){
+		return true;
+	}
+	if (chaser.position.x == (canvas.width-chaser.image.width)){
+		return true;	 	 	
+	}
+	return false
+}
 
 function stopOn (a, b) {
     a.position.x = b.position.x;
@@ -49,6 +61,9 @@ function chase (chaser, chasee) {
     if (samePlace (d))
         // TODO: do something when the dog catches the player
         return stopOn (chaser, chasee);
+		
+		if (onEdge(chaser))
+		buzzing();
 
     chaser.speed = game.difficulty * (d / 9.0);
     chaser.heading.x = chaser.speed * (rightOf (chaser, chasee)? -1 : 1);
